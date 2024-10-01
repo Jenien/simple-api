@@ -1,0 +1,345 @@
+openapi: 3.0.0
+info:
+  title: Inventory Management API
+  version: 1.0.0
+  description: API Mini untuk mengelola kategori dan item dalam sistem manajemen inventaris.
+servers:
+  - url: http://localhost:8000
+    description: Server lokal
+
+paths:
+  /categories:
+    get:
+      summary: Get all categories
+      description: Mengambil daftar semua kategori.
+      responses:
+        '200':
+          description: Berhasil mengambil kategori.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Electronics"
+                    
+    post:
+      summary: Create a new category
+      description: Membuat kategori baru.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "Electronics"
+      responses:
+        '201':
+          description: Kategori berhasil dibuat.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Electronics"
+        '400':
+          description: Nama kategori tidak boleh kosong atau sudah ada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Category name is required and must be unique."
+        '500':
+          description: Terjadi kesalahan saat membuat kategori.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error creating category"
+
+  /items:
+    get:
+      summary: Get all items
+      description: Mengambil daftar semua item, termasuk informasi kategori.
+      responses:
+        '200':
+          description: Berhasil mengambil item.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                      example: 1
+                    name:
+                      type: string
+                      example: "Laptop"
+                    price:
+                      type: number
+                      format: float
+                      example: 1500.00
+                    category_id:
+                      type: integer
+                      example: 1
+
+    post:
+      summary: Create a new item
+      description: Membuat item baru yang terkait dengan kategori.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "Laptop"
+                description:
+                  type: string
+                  example: "A high-performance laptop."
+                price:
+                  type: number
+                  format: float
+                  example: 1500.00
+      responses:
+        '201':
+          description: Item berhasil dibuat.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Laptop"
+                  price:
+                    type: number
+                    format: float
+                    example: 1500.00
+        '400':
+          description: Nama barang wajib diisi, harga dan kategori ID harus disertakan.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Item name, price, and category_id are required."
+        '500':
+          description: Terjadi kesalahan saat membuat item.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error creating item"
+
+  /items/{id}:
+    get:
+      summary: Get item by ID
+      description: Mengambil detail item berdasarkan ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID item
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Berhasil mengambil item.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 1
+                  name:
+                    type: string
+                    example: "Laptop"
+                  price:
+                    type: number
+                    format: float
+                    example: 1500.00
+        '400':
+          description: Item tidak ditemukan.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Item not found."
+        '500':
+          description: Terjadi kesalahan saat mengambil item.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error fetching item"
+
+    put:
+      summary: Update an existing item
+      description: Memperbarui item yang ada berdasarkan ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID item yang ingin diperbarui
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                category_id:
+                  type: integer
+                  example: 1
+                name:
+                  type: string
+                  example: "Laptop"
+                description:
+                  type: string
+                  example: "A high-performance laptop."
+                price:
+                  type: number
+                  format: float
+                  example: 1500.00
+      responses:
+        '200':
+          description: Item berhasil diperbarui.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Item updated."
+        '400':
+          description: Field wajib tidak boleh kosong atau dihapus.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Item name, price, and category_id cannot be empty."
+        '404':
+          description: Item tidak ditemukan.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Item not found."
+        '500':
+          description: Terjadi kesalahan saat memperbarui item.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error updating item"
+
+    delete:
+      summary: Delete an existing item
+      description: Menghapus item berdasarkan ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID item yang ingin dihapus
+          schema:
+            type: integer
+            example: 1
+      responses:
+        '200':
+          description: Item berhasil dihapus.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Item deleted successfully."
+        '400':
+          description: ID tidak valid.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid ID provided."
+        '404':
+          description: Item tidak ditemukan.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Item not found."
+        '500':
+          description: Terjadi kesalahan saat menghapus item.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Error deleting item."
