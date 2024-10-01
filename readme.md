@@ -46,12 +46,12 @@ Anda juga dapat melihat dokumentasi Postman yang lebih rinci di tautan berikut:
    
 2. Instal dependensi:
    ```bash
-   npm install
+   yarn
    ```
    
 3. Konfigurasi koneksi MySQL database di proyek.
 
 4. Jalankan server:
    ```bash
-   node server.js
+   yarn dev
    ```
